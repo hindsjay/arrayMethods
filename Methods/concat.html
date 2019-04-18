@@ -43,8 +43,12 @@ function concat() {
   for (var i = 0; i < arguments.length; i++) {
     if (Array.isArray(arguments[i])) {  // argument is an array
       for (var j = 0; j < arguments[i].length; j++) {
-        newArray.push(arguments[i][j]);
-      } 
+        if (j in arguments[i]) {
+          newArray.push(arguments[i][j]);
+        } else {
+          newArray.length++;  // to create empty value in newArray (as opposed to 'undefined')
+        }
+      }   
     } else {  // argument is not an array
       newArray.push(arguments[i]);
     }
