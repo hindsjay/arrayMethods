@@ -1,0 +1,145 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+  // function indexOf(array, searchElement) {
+    // for (var i = 0; i < array.length; i++) {
+      // if (array[i] === searchElement) {
+        // return i;
+      // }
+    // }
+    // return -1;
+  // }
+
+// Function Signature:
+  // indexOf(array, searchElement[, fromIndex])
+
+// Parameters:
+  // searchElement >>> element to locate in the array
+
+  // optional fromIndex:
+    // the index to start the search at going from front to back
+    // if fromIndex is greater than or equal to the array's length >>> the array is not searched and -1 will be returned
+    // if the provided index value is a negative number:
+      //  it is taken as the offset from the end of the array >>> i.e. array.length = 5, fromIndex = -2, therefore search will start from array[3]
+      // note:  the array is still searched from front to back
+    // if the provided index is 0, then the whole array will be searched
+
+// Return Value:
+  // returns the first index of the element that matches the searchElement in the array  
+  // returns -1 if there are no matches
+
+// Description:
+  // the indexOf method compares the searchElement parameter to elements in the array using strict equality
+
+
+
+function indexOf(array, searchElement, optionalFromIndex) {
+  var startingIndex = 0;
+
+  if (optionalFromIndex) {
+    if (optionalFromIndex >= array.length) {
+      return -1;
+    }
+    if (optionalFromIndex < 0) {
+      startingIndex = array.length + optionalFromIndex;
+    } else {
+      startingIndex = optionalFromIndex;
+    }
+  }
+
+  for (var i = startingIndex; i < array.length; i++) {
+    if (array[i] === searchElement) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+tests({
+  'The array to be searched should be the first argument to the function.': function() {
+    var originalArray = [1, 2, 3];
+    indexOf(originalArray);
+    eq(originalArray[0], 1);
+    eq(originalArray[1], 2);
+    eq(originalArray[2], 3);
+  },
+  'The element to locate in the array should be the second argument to the function.': function() {
+    var originalArray = [1, 2, 3];
+    var elementToSearch = 3;
+    indexOf(originalArray, elementToSearch);
+    eq(elementToSearch, 3);
+  },
+  'It should return the first index of the element that matches our search.': function() {
+    var originalArray = [1, 2, 3];
+    var indexOfResult = indexOf(originalArray, 3);
+    eq(indexOfResult, 2);
+  },
+  'If there are no matches, it should return -1.': function() {
+    var indexOfResult = indexOf([1, 2, 3], 5);
+    eq(indexOfResult, -1);
+  },
+  'It should stop searching the array when a matching element is found.': function() {
+    var originalArray = [1, 2, 3, 2];
+    var indexOfResult = indexOf(originalArray, 2);
+    eq(indexOfResult, 1);
+    eq(indexOfResult === 3, false)
+  },
+  'It should accept an optional fromIndex parameter.': function() {
+    var originalArray = [1, 2, 3];
+    var elementToSearch = 3;
+    var fromIndex = 1;
+    var indexOfResult = indexOf(originalArray, elementToSearch, fromIndex);
+    eq(fromIndex, 1);
+  },
+  'It should start the search from the noted fromIndex parameter.': function() {
+    var originalArray = [1, 2, 3, 4, 5];
+    var elementToSearch = 3;
+    var fromIndex = 1;
+    var indexOfResult = indexOf(originalArray, elementToSearch, fromIndex);
+    eq(indexOfResult, 2);
+
+    var originalArrayTwo = [1, 2, 3, 4, 5];
+    var elementToSearchTwo = 3;
+    var fromIndexTwo = 3;
+    var indexOfResultTwo = indexOf(originalArrayTwo, elementToSearchTwo, fromIndexTwo);
+    eq(indexOfResultTwo, -1);
+  },
+  'It should not search the array if fromIndex is greater than or equal to array.length.': function() {
+    var originalArray = [1, 2, 3, 4, 5];
+    var elementToSearch = 5;
+    var fromIndex = 5;
+    var indexOfResult = indexOf(originalArray, elementToSearch, fromIndex);
+    eq(indexOfResult, -1);
+  },
+
+  'If fromIndex is a negative number, it should be taken as the offset from the end of the array.': function() {
+    var originalArray = [1, 2, 3, 4, 5];
+    var elementToSearch = 3;
+    var fromIndex = -2;
+    var indexOfResult = indexOf(originalArray, elementToSearch, fromIndex);
+    eq(indexOfResult, -1);
+
+    var originalArrayTwo = [1, 2, 3, 4, 5];
+    var elementToSearchTwo = 3;
+    var fromIndexTwo = -4;
+    var indexOfResultTwo = indexOf(originalArrayTwo, elementToSearchTwo, fromIndexTwo);
+    eq(indexOfResultTwo, 2);
+  },
+  'If fromIndex is 0, then the whole array is searched.': function() {
+    var originalArray = [1, 2, 3, 4, 5];
+    var elementToSearch = 5;
+    var fromIndex = 0;
+    var indexOfResult = indexOf(originalArray, elementToSearch, fromIndex);
+    eq(indexOfResult, 4);
+  },
+  'It should return -1 for an empty array.': function() {
+    var elementToSearch = 5;
+    var indexOfResult = indexOf([], elementToSearch);
+    eq(indexOfResult, -1);
+  }
+});
+
+</script>
