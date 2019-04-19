@@ -1,0 +1,121 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+  // function includes(array, valueToFind) {
+    // for (var i = 0; i < array.length; i++) {
+      // if (array[i] === valueToFind) {
+        // return true;
+      // }
+    // }
+    // return false;
+  // }
+
+// Function Signature:
+  // includes(array, valueToFind[, fromIndex])
+
+// Parameters:
+  // valueToFind >>> the value to search for
+
+  // optional fromIndex
+    // the position in the array to begin searching for valueToFind
+    // for positive values of fromIndex >>> the first character/element in the array to be searched is found at fromIndex
+    // for negative values of fromIndex >>> the first character/element in the array to be searched is found at array.length + fromIndex 
+        // example1: array.length = 3, fromIndex = -1, therefore search will start at array[2])
+        // example2: array.length = 3, fromIndex = -100, therefore search will start at array[0])
+    // if fromIndex is greater than or equal to array.length >>> returns false without searching the array
+
+// Return Value:
+  // true if valueToFind is found
+  // false if valueToFind is not found
+
+// Description:
+  // includes method determines whether an array includes a certain value among its entries
+  // it is able to run on array-like objects
+
+
+
+function includes(array, valueToFind, optionalFromIndex) {
+  var startingIndex = 0;
+  
+  if (optionalFromIndex) {
+    if (optionalFromIndex >= array.length) {
+      return false;
+    }
+    if (optionalFromIndex < 0) {
+      startingIndex = array.length + optionalFromIndex;
+    } else {
+      startingIndex = optionalFromIndex;
+    }
+  }
+
+  for (var i = startingIndex; i < array.length; i++) {
+    if (array[i] === valueToFind) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+tests({
+  'It should return true if valueToFind is found.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var includesResult = includes(colors, 'green');
+    eq(includesResult, true);
+  },
+  'It should return false if valueToFind is not found.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var includesResult = includes(colors, 'orange');
+    eq(includesResult, false);
+  },
+  'It should accept an optional fromIndex parameter.': function() {
+    var array = [1, 2, 3, 4, 5];
+    var elementToFind = 2;
+    var optionalFromIndex = 2;
+    var includesResult = includes(array, elementToFind, optionalFromIndex);
+    eq(includesResult, false);
+  },
+  'If fromIndex is positive, it should start searching from that ith position.': function() {
+    var array = [1, 2, 3, 4, 5];
+    var elementToFind = 5;
+    var optionalFromIndex = 4;
+    var includesResult = includes(array, elementToFind, optionalFromIndex);
+    eq(includesResult, true);
+  },
+  'If fromIndex is negative, it should start searching from the ith position of array.length + fromIndex.': function() {
+    var array = [1, 2, 3, 4, 5];
+    var elementToFind = 5;
+    var optionalFromIndex = -4;
+    var includesResult = includes(array, elementToFind, optionalFromIndex);
+    eq(includesResult, true);
+
+    var arrayTwo = [1, 2, 3, 4, 5];
+    var elementToFindTwo = 5;
+    var optionalFromIndexTwo = -100;
+    var includesResultTwo = includes(arrayTwo, elementToFindTwo, optionalFromIndexTwo);
+    eq(includesResultTwo, true);
+  },
+  'If fromIndex is greater than or equal to array.length, it should return false without searching the array.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var optionalFromIndex = 3;
+    var includesResult = includes(colors, 'green', optionalFromIndex);
+    eq(includesResult, false);
+
+    var colorsTwo = ['blue', 'green', 'red'];
+    var optionalFromIndexTwo = 5;
+    var includesResultTwo = includes(colorsTwo, 'green', optionalFromIndexTwo);
+    eq(includesResultTwo, false);
+  },
+
+  'It should run on empty arrays and return false.': function() {
+    var includesResult = includes([], 'green');
+    eq(includesResult, false);
+
+    var includesResultTwo = includes([,,,,,], 'green');
+    eq(includesResultTwo, false);
+  }
+});
+
+</script>
