@@ -42,7 +42,7 @@ function indexOf(array, searchElement, optionalFromIndex) {
     if (optionalFromIndex >= array.length) {
       return -1;
     }
-    if (Math.sign(optionalFromIndex) === -1) {
+    if (optionalFromIndex < 0) {
       startingIndex = array.length + optionalFromIndex;
     } else {
       startingIndex = optionalFromIndex;
