@@ -63,16 +63,12 @@ function slice(array, optionalBeginValue, optionalEndValue) {
     }
   }
 
-  if (Array.isArray(arguments[0]) === true) {  // checks if array argument is an array
-    for (var i = startingIndex; i < endingIndex; i++) {
-      if (i in array) {
-        newArray.push(array[i]);
-      } else {
-        newArray.length++;  // to create empty value in newArray (as opposed to 'undefined')
-      }
+  for (var i = startingIndex; i < endingIndex; i++) {
+    if (i in array) {
+      newArray.push(array[i]);
+    } else {
+      newArray.length++;  // to create empty value in newArray (as opposed to 'undefined')
     }
-  } else {
-    newArray.push(arguments[0]);  // adds non-array items (i.e. object references) to new array
   }
   return newArray;
 }
@@ -103,7 +99,8 @@ tests({
   },
   'It should copy object references into the new array (i.e. new and original array refer to same object).': function() {
     var myObject = {color: 'blue'};
-    var sliceResult = slice(myObject);
+    var objectArray = [myObject]; 
+    var sliceResult = slice(objectArray);
     eq(sliceResult[0].color, 'blue');
 
     myObject.color = 'green';
