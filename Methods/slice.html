@@ -1,0 +1,203 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+  // function slice(array, optionalBeingValue, optionalEndValue) {
+  //   var newArray = [];
+  //   for (var i = 0; i < array.length; i++) {
+  //     newArray.push(array[i]);
+  //   }
+  //   return newArray;
+  // }
+
+// Function Signature:
+  // slice(array[,beginValue[, endValue]])
+
+// Parameters:
+  // optional beginValue:
+    // index at which to begin extraction
+    // a negative index can be used, indicating an offset from the end of the sequence >>> array = [1, 2, 3, 4, 5], slice(-2) would return [4, 5]
+    // if undefined, slice begins at index 0
+    // if greater then length of the sequence, an empty array is returned
+
+  // optional endValue:
+    // index before which to end extraction.  slice extracts up to but not including endValue
+    // a negative index can be used, indicating an offset from the end of the sequence >>> slice(2, -1) extracts the third element through the second-to-last element in the sequence (second-to-last element is included/extracted)
+    // if endValue is omitted, slice extracts through the end of the sequence (array.length)
+    // if end is greater than the length of the sequence, slice extracts through to the end of the sequence (array.lendth)
+
+// Return Value:
+  // a new array containing the extracted elements
+
+// Description:
+  // the slice method extracts portions (if defined using optional begin/end values) of an array or the whole array into a new array
+  // slice does not alter the original array.  It returns a shallow copy of the elements from the original array
+  // elements of the original array are copied into the new array as follows:
+    // 1. slice copies object references into the new array.  Both the original and new array refer to the same object.  If a referenced object changes, the changes are visible to both the new and original arrays
+    // 2. slice copties the values of strings, numbers, and booleans (primitives) into the new array.  Changes to these values in one array do not affect the other array
+    
+  // if a new element is added to either array, the other array is not affected
+
+
+
+
+function slice(array, optionalBeginValue, optionalEndValue) {
+  var newArray = [];
+  var startingIndex = 0;
+  var endingIndex = array.length;
+
+  if (optionalBeginValue) {
+    startingIndex = optionalBeginValue;
+    if (optionalBeginValue < 0) {
+      startingIndex = array.length + optionalBeginValue;
+    } 
+  }
+
+  if (optionalEndValue) {
+    if (optionalEndValue > 0 && optionalEndValue < array.length) {
+      endingIndex = array.length - 1;
+    }
+    if (optionalEndValue < 0) {
+      endingIndex = array.length + optionalEndValue;
+    }
+  }
+
+  if (Array.isArray(arguments[0]) === true) {  // checks if array argument is an array
+    for (var i = startingIndex; i < endingIndex; i++) {
+      if (i in array) {
+        newArray.push(array[i]);
+      } else {
+        newArray.length++;  // to create empty value in newArray (as opposed to 'undefined')
+      }
+    }
+  } else {
+    newArray.push(arguments[0]);  // adds non-array items (i.e. object references) to new array
+  }
+  return newArray;
+}
+
+
+
+tests({
+  'It should return a new array.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var sliceResult = slice(colors);
+    eq(colors != sliceResult, true);
+    eq(sliceResult[0], 'blue');
+    eq(sliceResult[2], 'red');
+  },
+  'It should return a new array with the extracted elements from the original array.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var sliceResult = slice(colors);
+    eq(sliceResult[0], 'blue');
+    eq(sliceResult[1], 'green');
+    eq(sliceResult[2], 'red');
+  },
+  'It should not modify the original array.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var sliceResult = slice(colors);
+    eq(colors[0], 'blue');
+    eq(colors[1], 'green');
+    eq(colors[2], 'red');
+  },
+  'It should copy object references into the new array (i.e. new and original array refer to same object).': function() {
+    var myObject = {color: 'blue'};
+    var sliceResult = slice(myObject);
+    eq(sliceResult[0].color, 'blue');
+
+    myObject.color = 'green';
+    eq(sliceResult[0].color, 'green');
+  },
+  'It should copy the values of strings, numbers, and booleans into the new array.': function() {
+    var funnyArray = ['green', 2, true];
+    var sliceResult = slice(funnyArray);
+    eq(sliceResult[0], 'green');
+    eq(sliceResult[1], 2);
+    eq(sliceResult[2], true);
+  },
+
+  'It should accept an optional beginValue.': function() {
+    var array = [1, 2, 3, 4, 5, 6];
+    var sliceResult = slice(array, 3);
+    eq(sliceResult.length, 3);
+  },
+  'If beginValue is positive, it should start at that ith position.': function() {
+    var array = [1, 2, 3, 4, 5, 6];
+    var sliceResult = slice(array, 5);
+    eq(sliceResult.length, 1);
+    eq(sliceResult, 6);
+  },
+  'If beginValue is negative, it should start from the calculated index of the offset from the end of array.': function() {
+    var array = [1, 2, 3, 4, 5, 6];
+    var sliceResult = slice(array, -3);
+    eq(sliceResult.length, 3);
+    eq(sliceResult[0], 4);
+    eq(sliceResult[1], 5);
+    eq(sliceResult[2], 6);
+  },
+  'If beginValue is undefined, it should start from array[0].': function() {
+    var array = [1, 2, 3, 4, 5, 6];
+    var sliceResult = slice(array, );
+    eq(sliceResult.length, 6);
+  },
+  'If beginValue is greater than the length of the array, an empty array is returned.': function() {
+    var array = [1, 2, 3];
+    var sliceResult = slice(array, 5);
+    eq(sliceResult.length, 0);
+    eq(Boolean(sliceResult), true);
+  },
+
+  'It should accept an optional endValue.': function() {
+    var array = [1, 2, 3, 4, 5, 6];
+    var sliceResult = slice(array, 2, 5);
+    eq(sliceResult.length, 3);
+  },
+  'If endValue is positive, it should extract up to but not including endValue.': function() {
+    var array = [1, 2, 3, 4, 5, 6];
+    var sliceResult = slice(array, 2, 5);
+    eq(sliceResult.length, 3);
+    eq(sliceResult[0], 3);
+    eq(sliceResult[1], 4);
+    eq(sliceResult[2], 5);
+  },
+  'If endValue is negative, it should end at and include the calculated index of the offset from the end of array.': function() {
+    var array = [1, 2, 3, 4, 5];
+    var sliceResult = slice(array, 0, -2);
+    eq(sliceResult.length, 3);
+    eq(sliceResult[0], 1);
+    eq(sliceResult[1], 2);
+    eq(sliceResult[2], 3);
+  },
+  'If endValue is not defined or omitted, it should extract the whole array.': function() {
+    var array = [1, 2, 3];
+    var sliceResult = slice(array, 0, );
+    eq(sliceResult.length, 3);
+    eq(sliceResult[0], 1);
+    eq(sliceResult[1], 2);
+    eq(sliceResult[2], 3);
+  },
+  'If endValue is greater than the length of the array, it should extract the whole array.': function() {
+    var array = [1, 2, 3];
+    var sliceResult = slice(array, 0, 5);
+    eq(sliceResult.length, 3);
+    eq(sliceResult[0], 1);
+    eq(sliceResult[1], 2);
+    eq(sliceResult[2], 3);
+  },
+  'If a new element is added to either the new or original array, the other is not affected.': function() {
+    var array = [1, 2, 3];
+    var sliceResult = slice(array);
+
+    sliceResult.push(4);
+    eq(sliceResult[3], 4);
+    eq(array[3], undefined);
+  },
+  'It should include elements that are empty as part of the extraction.': function() {
+    var array = [1, , 3, , 5];
+    var sliceResult = slice(array);
+    eq(sliceResult.length, 5);
+  }
+});
+
+</script>
