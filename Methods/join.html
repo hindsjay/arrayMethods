@@ -1,0 +1,113 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+  // function join(array, optionalSeparator) {
+  //   var newString = "";
+  //   for (var i = 0; i < array.length; i++) {
+  //     newString = newString + array[i];
+  //   }
+  //   return newString;
+  // }
+    
+// Function Signature:
+  // join(array[, optionalSeparator])
+
+// Parameters:
+  // optional separator:
+    // specifies a string to separate each element in the array
+    // the separator is converted to a string if necessary
+    // if omitted, the array elements are separated by a comma
+    // if separator is an empty string (i.e. ''), all elements are joined with no characters between them
+
+// Return Value:
+  // a string with all array elements joined
+  // if array.length is 0, an empty string is returned
+
+// Description:
+  // the string conversions of all array elements are joined into one string
+  // join method concatenates/combines all of the elements in an array into a new string.  Each element is separated by commas (default) or a specified separator string
+  // if the array has only one item, then that item will be returned without using any separator
+  // if an element is 'undefined' or 'null', it is converted to the empty string
+
+
+
+function join(array, optionalSeparator) {
+  var newString = "";
+  var separator = "";
+
+  if (array.length === 0) {
+    return newString;
+  }
+
+  if (optionalSeparator === undefined) {
+    separator = ',';
+  } else {
+    separator = optionalSeparator;
+  }
+
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] === undefined || array[i] === null) {
+      newString = newString + '';
+    } else {
+      newString = newString + array[i];
+    }
+    if (i !== array.length -1) {
+      newString = newString + separator;
+    }
+  }
+  return newString;
+}
+
+
+
+tests({
+  'It should create a new string from all elements in an array.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var joinResult = join(colors);
+    eq(joinResult, "blue,green,red");
+  },
+  'It should separate each element by commas as a default.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var joinResult = join(colors);
+    eq(joinResult, "blue,green,red");
+  },
+  'It should accept an optional separator value.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var joinResult = join(colors, '-');
+    eq(joinResult, "blue-green-red");
+  },
+  'If a separator value is used, it should separate each element of the array by that defined separator.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var joinResult = join(colors, '+');
+    eq(joinResult, "blue+green+red");
+  },
+  'If the separator is an empty string, it should join all elements with no characters between them.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var joinResult = join(colors, '');
+    eq(joinResult, "bluegreenred");
+  },
+  'If the separator value is omitted, it should separate each element by a comma.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var joinResult = join(colors);
+    eq(joinResult, "blue,green,red");
+  },
+  'If the array has only one item, then that single item will be returned without using any separator.': function() {
+    var colors = ['blue'];
+    var joinResult = join(colors);
+    eq(joinResult, "blue");
+  },
+  'If an element is "undefined" or "null", it is converted to an empty string value.': function() {
+    var colors = ['blue', undefined, null, 'green'];
+    var joinResult = join(colors);
+    eq(joinResult, "blue,,,green");
+  },
+  'If array.length is 0, an empty string is returned.': function() {
+    var colors = [];
+    var joinResult = join(colors);
+    eq(joinResult, "");
+  },
+});
+
+</script>
