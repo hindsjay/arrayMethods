@@ -1,0 +1,74 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+// function pop(array) {
+//   var elementToRemove = array.length - 1;
+//   var arraySpliced = array.splice(elementToRemove, 1);
+//   return arraySpliced;
+// }
+
+// Function Signature:
+  // pop(array);
+
+// Parameters:
+  // no parameters (in native pop method)
+
+// Return Value:
+  // returns the removed element from the array
+  // returns undefined if the array is empty
+
+// Description:
+  // removes the last element from an array and returns that value to the caller
+
+
+
+function pop(array) {
+  if (array.length === 0) {
+    return undefined;
+  }
+
+  var elementToRemove = array.length - 1;
+  var arraySpliced = array.splice(elementToRemove, 1);
+
+  return arraySpliced;
+}
+
+// Option 2:
+  // function pop(array) {
+  //   if (array.length === 0) {
+  //     return undefined;
+  //   }
+  // 
+  //   var elementToRemove = array[array.length - 1];
+  //   array.length--;
+  // 
+  //   return elementToRemove;
+  // }
+
+
+tests({
+  'It should remove the last element in the array.': function() {
+    var array = [1, 2, 3];
+    pop(array);
+    eq(array.length, 2);
+    eq(array[0], 1);
+    eq(array[1], 2);
+    eq(array[2], undefined);
+  },
+  'It should return the removed element from the array.': function() {
+    var array = [1, 2, 3];
+    var popResult = pop(array);
+    eq(array.length, 2);
+    eq(popResult, 3);
+  },
+  'It should return undefined if the array is empty.': function() {
+    var array = [];
+    var popResult = pop(array);
+    eq(popResult, undefined);
+    eq(array.length, 0);
+  }
+});
+
+</script>
