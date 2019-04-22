@@ -1,0 +1,73 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+// function push(array) {
+//   var arrayIndex = array.length;
+//   var argumentsIndex = 1;
+//   for (var i = arrayIndex; i < arguments.length; i++) {
+//     array[i] = arguments[argumentsIndex];
+//   }
+//   return array.length;
+// }
+
+// Function Signature:
+  // push(array, element1[, elementN])
+
+// Parameters:
+  // elementN --> elements to add to the end of the array (can add more than one)
+
+// Return Value:
+  // the new length property of the object (array) which the method was called
+
+// Description:
+  // push method appends one or more elements to the end of an array and returns the new length of the array
+  // push method relies on a length property to determine where to start inserting given values
+  // if the length property cannot be converted into a number, the index 0 is used.  This includes the possibility of length being nonexistent, in which case length will also be created
+
+
+
+function push(array) {
+  var arrayIndex = array.length;
+  var argumentsIndex = 1;
+
+  for (var i = arrayIndex; i < arguments.length + 1; i++) {
+    array[i] = arguments[argumentsIndex];
+    argumentsIndex++;
+  }
+  return array.length;
+}
+
+
+tests({
+  'It should append an element to the end of an array.': function() {
+    var array = [1, 2];
+    push(array, 3);
+    eq(array.length, 3);
+    eq(array[2], 3);
+  },
+  'It should return the length of the new array after it adds a new element.': function() {
+    var array = [1, 2];
+    var pushResult = push(array, 3);
+    eq(pushResult, 3);
+  },
+  'It should append more than one element to the end of an array.': function() {
+    var array = [1, 2];
+    push(array, 3, 4, 5);
+    eq(array.length, 5);
+    eq(array[2], 3);
+    eq(array[3], 4);
+    eq(array[4], 5);
+  },
+  'It should be able to accept an array as one element to be pushed to an existing array.': function() {
+    var array = [1, 2];
+    var arrayTwo = [3, 4, 5];
+    push(array, arrayTwo);
+    eq(array.length, 3);
+    eq(array[1], 2);
+    eq(array[2], arrayTwo);
+  }
+});
+
+</script>
