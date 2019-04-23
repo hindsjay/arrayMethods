@@ -1,0 +1,66 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Function Signature:
+  // unshift(array[,elementN]);
+
+// Parameters:
+  // elementN >>> the elements to add to the front of the array
+
+// Return Value:
+  // the new length of the array
+
+// Description:
+  // adds one or more elements to the beginning of an array and returns the new length of the array
+
+
+
+function unshift(array) {
+  var argumentsIndex = 1;
+  var totalNumberOfIndexes = (array.length + arguments.length) - 2;
+
+  for (var i = array.length - 1; i >= 0; i--) {  // to shift current array elements up
+    array[totalNumberOfIndexes] = array[i];
+    totalNumberOfIndexes--;
+  }
+
+  for (var j = 0; j < arguments.length - 1; j++) {  // to add new element(s) to array
+    array[j] = arguments[argumentsIndex];
+    argumentsIndex++;
+  }
+  return array.length;
+}
+
+
+tests({
+  'It should be able to add an element to the front of the array.': function() {
+    var array = [1, 2, 3];
+    unshift(array, 4);
+    eq(array.length, 4);
+    eq(array[0], 4);
+    eq(array[3], 3);
+  },
+  'It should be able to add multiple elements to the front of the array in the same order they were passed in.': function() {
+    var array = [1, 2, 3];
+    unshift(array, 4, 5, 6);
+    eq(array.length, 6);
+    eq(array[0], 4);
+    eq(array[2], 6);
+    eq(array[4], 2);
+    eq(array[5], 3);
+  },
+  'It should return the new length of the array after the elements have been added.': function() {
+    var array = [1, 2, 3];
+    var unshiftResult = unshift(array, 4, 5, 6, 7, 8);
+    eq(unshiftResult, 8);
+  },
+  'It should be able to accept an array as one element to be pushed to an existing array.': function() {
+    var array = [1, 2, 3];
+    var unshiftResult = unshift(array, [4, 5, 6]);
+    eq(unshiftResult, 4);
+    eq(array.length, 4);
+  }
+});
+
+</script>
