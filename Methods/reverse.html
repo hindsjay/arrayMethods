@@ -1,0 +1,58 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Function Signature:
+  // reverse(array);
+
+// Parameters:
+  // no parameters (for the native reverse method)
+
+// Return Value:
+  // returns the reversed array
+
+// Description:
+  // reverses an array where the first element becomes the last, and the last array element becomes the first
+
+
+function reverse(array) {
+  var doubleArrayIndexes = (array.length * 2) - 1;
+  var updatedArrayStartingIndex = 0;
+  var originalArrayLength = array.length;
+
+
+  for (var i = array.length - 1; i >= 0; i--) {  // to create a double of the original array
+    array[doubleArrayIndexes] = array[i]
+    doubleArrayIndexes--;
+  }
+
+  for (var i = array.length - 1; i >= originalArrayLength; i--) {  // to take original array and reverse
+    array[updatedArrayStartingIndex] = array[i];
+    updatedArrayStartingIndex++;
+    array.length--;  // remove the double array elements
+  }
+
+  return array;
+}
+
+
+tests({
+  'It should reverse the array.': function() {
+    var array = [1, 2, 3, 4, 5];
+    reverse(array);
+    eq(array.length, 5);
+    eq(array[0], 5);
+    eq(array[1], 4);
+    eq(array[4], 1);
+  },
+  'It should return the reversed array.': function() {
+    var array = [1, 2, 3];
+    var reverseResult = reverse(array);
+    eq(reverseResult.length, 3);
+    eq(reverseResult[0], 3);
+    eq(reverseResult[1], 2);
+    eq(reverseResult[2], 1);
+  }
+});
+
+</script>
