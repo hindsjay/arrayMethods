@@ -1,0 +1,143 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Prototype Implementation:
+  // function fill(array, value, optionalStartIndex, optionalEndIndex) {
+  //   var startingIndex = 0;
+  //   var endingIndex = array.length;
+  //   for (var i = startingIndex; i < endingIndex; i++ ) {
+  //     array[i] = value;
+  //   }
+  //   return array
+  // }
+
+// Function Signature:
+  // fill(array[, startIndex[, endIndex]])
+
+// Parameters:
+  // value >>> value to modify (fill) elements of the array
+  // optionalStartIndex >>> index to start modifiying the elements (index zero if not defined)
+  // optionalEndIndex >>> elements are modifed up to this index (array length if not defined)
+
+// Return Value:
+  // returns the modified array
+
+// Description:
+  // modifies all the elements of an array from a start index (zero if not defined) to an end index (array length if not defined)
+  // if startIndex is negative, it is treated as array.length + startIndex >>> i.e. it basically calculates an offset from the end of the array where those elements are modified with the specified value
+  // if endIndex is negative, it is treated as array.length + endIndex >>> i.e. it basically calculates an offset from the end of the array where those elements are not modified
+  // when fill gets passed an object, it will copy the reference and fill the array with references to that object
+
+
+
+
+function fill(array, value, optionalStartIndex, optionalEndIndex) {
+  var startingIndex = 0;
+  var endingIndex = array.length;
+
+  if (optionalStartIndex) {
+    if (optionalStartIndex < 0) {
+      startingIndex = array.length + optionalStartIndex;
+    } else {
+      startingIndex = optionalStartIndex;
+    }
+  }
+  
+  if (optionalEndIndex) {
+    if (optionalEndIndex < 0) {
+      endingIndex = array.length + optionalEndIndex;
+    } else {
+      endingIndex = optionalEndIndex;
+    }
+  }
+  
+  for (var i = startingIndex; i < endingIndex; i++ ) {
+    array[i] = value;
+  }
+  return array
+}
+
+
+tests({
+  'It should modify all elements in the array with the specified value.': function() {
+    var array = [1, 2, 3];
+    fill(array, 5);
+    eq(array.length, 3);
+    eq(array[0], 5);
+    eq(array[1], 5);
+    eq(array[2], 5);
+  },
+  'It should return the modified array.': function() {
+    var array = [1, 2, 3];
+    var fillResult = fill(array, 5);
+    eq(fillResult, array);
+  },
+  'It should accept an optional startIndex.': function() {
+    var array = [1, 2, 3];
+    fill(array, 5, 2);
+    eq(array.length, 3);
+    eq(array[0], 1);
+    eq(array[1], 2);
+    eq(array[2], 5);
+  },
+  'It should accept an optional endIndex.': function() {
+    var array = [1, 2, 3];
+    fill(array, 5, 0, 2);
+    eq(array.length, 3);
+    eq(array[0], 5);
+    eq(array[1], 5);
+    eq(array[2], 3);
+  },
+  'It should modify the elements in the array from the start index if defined.': function() {
+    var array = [1, 2, 3, 4, 5];
+    fill(array, 7, 2);
+    eq(array.length, 5);
+    eq(array[0], 1);
+    eq(array[1], 2);
+    eq(array[2], 7);
+    eq(array[3], 7);
+    eq(array[4], 7);
+  },
+  'It should end modifying elements in the array up to the defined end index.': function() {
+    var array = [1, 2, 3, 4, 5];
+    fill(array, 7, 0, 2);
+    eq(array.length, 5);
+    eq(array[0], 7);
+    eq(array[1], 7);
+    eq(array[2], 3);
+    eq(array[3], 4);
+    eq(array[4], 5);
+  },
+  'If startIndex is negative it should modify the elements of the caluclated offset from the end of the array.': function() {
+    var array = [1, 2, 3, 4, 5];
+    fill(array, 7, -3);
+    eq(array.length, 5);
+    eq(array[0], 1);
+    eq(array[1], 2);
+    eq(array[2], 7);
+    eq(array[3], 7);
+    eq(array[4], 7);
+  },
+  'If endIndex is negative it should modify all the elements up to the calculated offset from the end of the array.': function() {
+    var array = [1, 2, 3, 4, 5];
+    fill(array, 7, 0, -3);
+    eq(array.length, 5);
+    eq(array[0], 7);
+    eq(array[1], 7);
+    eq(array[2], 3);
+    eq(array[3], 4);
+    eq(array[4], 5);
+  },
+  'If the parameter is an object, it should copy the reference and modify the array with references to that object.': function() {
+    var array = [1, 2, 3];
+    var myObject = {color: 'green'};
+    fill(array, myObject);
+
+    array[0].color = 'blue';  // change the color property on the object reference in array to 'blue'
+    eq(array[1].color, 'blue');
+    eq(array[2].color, 'blue');
+  }
+});
+
+</script>
