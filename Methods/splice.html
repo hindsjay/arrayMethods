@@ -1,0 +1,260 @@
+<script src="../simpletest.js"></script>
+<script>
+
+
+// Function Signature:
+  // splice(array, startIndex[, deleteCount[, item1[, item2[, ...]]]]);
+
+// Parameters:
+  // startIndex:
+     // index to start changing the array (with origin 0)
+     // if startIndex greater than the length of the array, actual starting index will be set to the length of the array >>> no elements are removed
+     // if startIndex is negative, it will begin that many elements from the end of the array >>> which means that a startIndex of -2 is the same as array.length - 2
+     // if startIndex negative number is greater than the the length of the array (i.e. array.length = 5, startIndex = -7), then startIndex is 0
+
+  // optional deleteCount:
+     // an integer indicating the number of old array elements to remove
+     // if omitted, then all elements from startIndex through the end of the array will be deleted
+     // if equal to or greater than (array.length - startIndex, i.e. greater than or equal to the number of elements left in the array, after startingIndex), then all elements from startIndex through the end of the array will be deleted
+     // if 0 or negative, no elements are removed >>> in this case, a new element should be specified (see optional items below)
+
+  // optional items:
+     // the elements to add to the array, beginning at startIndex
+     // if no elements are specified, no items are added and splice will only remove elements from the array
+
+// Return Value:
+  // returns an array containing the deleted elements
+  // if only one element is removed, an array of one element is returned
+  // if no elements are removed, an empty array is returned
+
+// Description:
+  // changes the contents of an array by removing or replacing existing elements and/or adding new elements
+  // if you specify a different number of elements to insert than the number you're removing, the array will have a different length at the end of the call
+
+
+
+function splice(array, startIndex, deleteCount) {
+  var removedElements = [];
+  var tempArray = [];
+  var tempArrayStartingIndex = 0;
+  var removedElementsIndex = 0;
+  var startingIndex = startIndex;
+  var numberOfElementsToDelete = deleteCount;
+  var counter = 0;
+  var argumentsStartingIndex = 3;
+
+  if (arguments.length === 1) {  // when there is no startIndex defined
+    return removedElements;
+  }
+  
+  // to set startingIndex accordingly
+  if (startingIndex >= 0) {
+    if (startingIndex > array.length) {
+      startingIndex = array.length;
+    }
+  } else {  // when startIndex is negative
+    if (startingIndex < (0 - array.length)) {  // when negative startIndex is greater than array.length
+      startingIndex = 0;
+    } else {
+      startingIndex = array.length + startingIndex;
+    }
+  }
+  
+  if (arguments.length <= 2) {  // when there is startIndex defined
+    for (var i = startingIndex; i < array.length; i++) {  // to move the elements to be deleted to new array
+      removedElements[removedElementsIndex] = array[i];
+      removedElementsIndex++;
+    }
+    for (var i = array.length - 1; i >= startingIndex; i--) {  // to remove the elements from the original array
+      array.length--;
+    }
+
+  } else {  // when deleteCount is defined
+
+    if (deleteCount >= (array.length - startingIndex)) {
+      numberOfElementsToDelete = array.length - startingIndex;
+    }
+    if (deleteCount <= 0 ) {
+      return removedElements;
+    }
+    for (var i = startingIndex; i < array.length; i++) {  // to move the elements to be deleted to new array
+      removedElements[removedElementsIndex] = array[i];
+      removedElementsIndex++;
+      counter++;
+      if (counter === numberOfElementsToDelete) {
+        break;
+      }
+    }
+    for (var i = startingIndex; i < array.length - numberOfElementsToDelete; i++) {  // to shift remaining elements in original array down over removed elements
+      array[i] = array[i + numberOfElementsToDelete];
+    }
+    for (var i = numberOfElementsToDelete; i > 0; i--) {  // to remove the elements from the original array
+      array.length--;
+    }
+
+    counter = 0;
+
+    if (arguments.length > 3) {  // when there are optional items to add
+      for (var i = startingIndex; i < array.length; i++) {  // to move remaining elements (after startIndex) in original array to a temp array
+        tempArray[tempArrayStartingIndex] = array[i];
+        tempArrayStartingIndex++;
+      }
+      for (var i = startingIndex; i < arguments.length; i++) {  // to add optional items to original array starting at startIndex
+        array[i] = arguments[argumentsStartingIndex];
+        argumentsStartingIndex++;
+        counter++;
+        if (counter === arguments.length - 3) {  // using 3 because any arguments more than 3 would be optional items to add
+          break;
+        }
+      }
+
+      var endArrayIndex = array.length;
+
+      for (var i = 0; i < tempArray.length; i++) {  // to add original array elements back after splice
+        array[endArrayIndex] = tempArray[i]
+        endArrayIndex++;
+      }
+    }
+  }
+  return removedElements;
+}
+
+
+tests({
+  'It should remove elements from the array.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, 0);
+    eq(colors.length, 0);
+    eq(spliceResult.length, 5);
+    eq(spliceResult[0], 'blue');
+    eq(spliceResult[1], 'green');
+    eq(spliceResult[2], 'red');
+    eq(spliceResult[3], 'orange');
+    eq(spliceResult[4], 'purple');
+  },
+  'it should remove elements from the array starting from startIndex.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, 2);
+    eq(colors.length, 2);
+    eq(spliceResult.length, 3);
+    eq(spliceResult[0], 'red');
+    eq(spliceResult[1], 'orange');
+    eq(spliceResult[2], 'purple');
+  },
+  'It should return an array containing the deleted elements.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, 2);
+    eq(colors.length, 2);  // original array, keeps elements not deleted
+    eq(colors[0], 'blue');
+    eq(colors[1], 'green');
+
+    eq(spliceResult.length, 3);  // deleted elemenst in a new array
+    eq(spliceResult[0], 'red');
+    eq(spliceResult[1], 'orange');
+    eq(spliceResult[2], 'purple');
+  },
+  'If startIndex is greater than array.length, startingIndex is set to array.length and it should not remove any items.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, 8);
+    eq(colors.length, 5);
+    eq(spliceResult.length, 0);
+    eq(spliceResult[0], undefined);
+  },
+  'If startIndex is negative, it should begin removing items that many elements from the end of the array.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, -2);
+    eq(colors.length, 3);
+    eq(spliceResult.length, 2);
+    eq(spliceResult[0], 'orange');
+    eq(spliceResult[1], 'purple');
+  },
+  'If startIndex negative number (absolute value) is greater than length.array, it should start removing items from index[0].': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, -7);
+    eq(colors[0], undefined);
+    eq(spliceResult[0], 'blue');
+    eq(spliceResult[1], 'green');
+    eq(spliceResult[2], 'red');
+    eq(spliceResult[3], 'orange');
+    eq(spliceResult[4], 'purple');
+  },
+
+  'If deleteCount defined, it should remove the number of elements as defined by deleteCount.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
+    var spliceResult = splice(colors, 1, 3);
+    eq(colors.length, 3);
+    eq(spliceResult.length, 3);
+    eq(spliceResult[0], 'green');
+    eq(spliceResult[1], 'red');
+    eq(spliceResult[2], 'orange');
+  },
+  'If no deleteCount, it should remove all elements from startIndex through the end of the array.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors, 0);
+    eq(colors.length, 0);
+    eq(spliceResult.length, 5);
+    eq(spliceResult[0], 'blue');
+    eq(spliceResult[1], 'green');
+    eq(spliceResult[2], 'red');
+    eq(spliceResult[3], 'orange');
+    eq(spliceResult[4], 'purple');
+  },
+  'If deleteCount is >= (array.length - startIndex), it should remove all elements from startIndex to the end of the array.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
+    var spliceResult = splice(colors, 2, 6);
+    eq(colors.length, 2);
+    eq(spliceResult.length, 4);
+    eq(spliceResult[0], 'red');
+    eq(spliceResult[1], 'orange');
+    eq(spliceResult[2], 'purple');
+    eq(spliceResult[3], 'yellow');
+  },
+  'If deleteCount is 0 or negative, it should not remove any items.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
+    var spliceResult = splice(colors, 2, -3);
+    eq(colors.length, 6);
+    eq(spliceResult.length, 0);
+    eq(colors[0], 'blue');
+    eq(colors[2], 'red');
+    eq(colors[4], 'purple');
+    eq(colors[5], 'yellow');
+  },
+  'If only one element is removed, it should return an array with that one element.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
+    var spliceResult = splice(colors, 3, 1);
+    eq(colors.length, 5);
+    eq(spliceResult.length, 1);
+    eq(spliceResult[0], 'orange');
+  },
+
+  'If optional items are defined, it should add those items to the array starting at startIndex.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var spliceResult = splice(colors, 1, 2, 'orange', 'purple', 'yellow');
+    eq(colors.length, 4);
+    eq(colors[0], 'blue');
+    eq(colors[1], 'orange');
+    eq(colors[2], 'purple');
+    eq(colors[3], 'yellow');
+    eq(spliceResult.length, 2);
+    eq(spliceResult[0], 'green');
+    eq(spliceResult[1], 'red');
+  },
+  'If no optional items are defined, it should only remove items from the array.': function() {
+    var colors = ['blue', 'green', 'red'];
+    var spliceResult = splice(colors, 2, 2);
+    eq(colors.length, 2);
+    eq(colors[0], 'blue');
+    eq(colors[1], 'green');
+    eq(spliceResult.length, 1);
+    eq(spliceResult[0], 'red');
+  },
+  'If there is no startIndex value defined, it should not remove any elements and return an empty array.': function() {
+    var colors = ['blue', 'green', 'red', 'orange', 'purple'];
+    var spliceResult = splice(colors);
+    eq(colors.length, 5);
+    eq(spliceResult.length, 0);
+    eq(spliceResult[0], undefined);
+  }
+});
+
+</script>
