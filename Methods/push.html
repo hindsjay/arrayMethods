@@ -32,7 +32,7 @@ function push(array) {
   var arrayIndex = array.length;
   var argumentsIndex = 1;
 
-  for (var i = arrayIndex; i < arguments.length + 1; i++) {
+  for (var i = arrayIndex; i < (arguments.length + arrayIndex) - 1; i++) {
     array[i] = arguments[argumentsIndex];
     argumentsIndex++;
   }
@@ -60,6 +60,14 @@ tests({
     eq(array[3], 4);
     eq(array[4], 5);
   },
+  'It should append more than one element to the end of an array, when array is longer than # of elements to add.': function() {
+    var array = [1, 2, 3, 4];
+    push(array, 5, 6);
+    eq(array.length, 6);
+    eq(array[2], 3);
+    eq(array[3], 4);
+    eq(array[5], 6);
+  },  
   'It should be able to accept an array as one element to be pushed to an existing array.': function() {
     var array = [1, 2];
     var arrayTwo = [3, 4, 5];
